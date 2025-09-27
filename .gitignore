@@ -1,0 +1,33 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Haskell Stack
+.stack-work/
+.stack-work/*
+.stack-work/**
+
+# Cabal
+dist/
+dist-newstyle/
+cabal.project.local
+cabal.project.local.*
+*.cabal-sandbox/
+*.ghc.environment.*
+
+# Arquivos de build
+*.hi
+*.o
+*.dyn_o
+*.dyn_hi
+
+# Logs e temporários
+*.log
+*.tmp
+*.swp
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+*.txt

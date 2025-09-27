@@ -1,0 +1,27 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.37.0.
+--
+-- see: https://github.com/sol/hpack
+
+name:           perso-2025b-brucvei
+version:        0.0.0
+build-type:     Simple
+executable perso-2025b-brucvei
+  main-is:             Main.hs
+  build-depends:       base, scotty, aeson, sqlite-simple, text, http-types
+  hs-source-dirs:      .
+  default-language:    Haskell2010
+
+test-suite perso-2025b-brucvei-test
+  type:                exitcode-stdio-1.0
+  main-is:             Test.hs
+  hs-source-dirs:      .
+  build-depends:       base, aeson, sqlite-simple, text, http-types, hspec, perso-2025b-brucvei
+  default-language:    Haskell2010
+
+library
+  exposed-modules:     Task
+  hs-source-dirs:      .
+  build-depends:       base, aeson, sqlite-simple, text
+  default-language:    Haskell2010
