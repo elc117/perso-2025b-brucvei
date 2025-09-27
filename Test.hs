@@ -15,36 +15,36 @@ main :: IO ()
 main = hspec $ do
   describe "Task JSON encoding/decoding" $ do
     it "encode and decode Task" $ do
-      let task = Task 1 "Estudar Haskell" "desc" True "feito"
+      let task = Task 1 "Estudar Haskell" "desc" True "feito" "estudos" "2024-12-31"
       (decode . encode) task `shouldBe` Just task
 
   describe "Task equality" $ do
     it "tasks with same fields are equal" $ do
-      Task 1 "A" "desc" False "novo" `shouldBe` Task 1 "A" "desc" False "novo"
+      Task 1 "A" "desc" False "novo" "pessoal" "2024-12-31" `shouldBe` Task 1 "A" "desc" False "novo" "pessoal" "2024-12-31"
     it "tasks with different ids are not equal" $ do
-      Task 1 "A" "desc" False "novo" `shouldNotBe` Task 2 "A" "desc" False "novo"
+      Task 1 "A" "desc" False "novo" "pessoal" "2024-12-31" `shouldNotBe` Task 2 "A" "desc" False "novo" "pessoal" "2024-12-31"
 
   describe "Funções auxiliares com SQLite" $ do
     it "insertTask e getTaskById" $ withTestDB $ \conn -> do
-      let task = Task 0 "Teste" "desc" True "novo"
+      let task = Task 0 "Teste" "desc" True "novo" "trabalho" "2024-12-31"
       newId <- insertTask conn task
       mtask <- getTaskById conn newId
-      fmap (\t -> (title t, done t)) mtask `shouldBe` Just ("Teste", True)
+      fmap (\t -> (title t, done t, category t, dueDate t)) mtask `shouldBe` Just ("Teste", True, "trabalho", "2024-12-31")
 
     it "getAllTasks retorna todas as tarefas" $ withTestDB $ \conn -> do
-      _ <- insertTask conn (Task 0 "A" "desc" False "novo")
-      _ <- insertTask conn (Task 0 "B" "desc" True "feito")
+      _ <- insertTask conn (Task 0 "A" "desc" False "novo" "pessoal" "2024-12-31")
+      _ <- insertTask conn (Task 0 "B" "desc" True "feito" "estudos" "2024-11-30")
       tasks <- getAllTasks conn
       length tasks `shouldBe` 2
 
     it "updateTask altera uma tarefa existente" $ withTestDB $ \conn -> do
-      newId <- insertTask conn (Task 0 "Antigo" "desc" False "novo")
-      updateTask conn newId (Task newId "Novo" "desc" True "feito")
+      newId <- insertTask conn (Task 0 "Antigo" "desc" False "novo" "trabalho" "2024-12-31")
+      updateTask conn newId (Task newId "Novo" "desc" True "feito" "trabalho" "2025-01-01")
       mtask <- getTaskById conn newId
-      fmap (\t -> (title t, done t)) mtask `shouldBe` Just ("Novo", True)
+      fmap (\t -> (title t, done t, dueDate t)) mtask `shouldBe` Just ("Novo", True, "2025-01-01")
 
     it "deleteTask remove uma tarefa" $ withTestDB $ \conn -> do
-      newId <- insertTask conn (Task 0 "Apagar" "desc" False "novo")
+      newId <- insertTask conn (Task 0 "Apagar" "desc" False "novo" "pessoal" "2024-12-31")
       deleteTask conn newId
       mtask <- getTaskById conn newId
       mtask `shouldBe` Nothing

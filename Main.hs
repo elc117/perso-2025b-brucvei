@@ -3,7 +3,7 @@
 import Web.Scotty
 import Data.Aeson (FromJSON, ToJSON)
 import qualified Data.Aeson as Aeson
-import Data.Text.Lazy (Text)
+import Data.Text.Lazy (Text, pack, unpack)
 import Control.Monad.IO.Class (liftIO)
 import Database.SQLite.Simple
 import Network.HTTP.Types.Status (status404)
@@ -25,6 +25,20 @@ main = do
       case mt of
         Just task -> json task
         Nothing -> status status404 >> text "Tarefa não encontrada"
+
+    get "/categories" $ do
+      cats <- liftIO $ getAllCategories conn
+      json cats
+
+    get "/tasks/category/:category" $ do
+      cat <- param "category"
+      tasks <- liftIO $ getTasksByCategory conn (unpack cat)
+      json tasks
+
+    get "/tasks/due/:date" $ do
+      date <- param "date"
+      tasks <- liftIO $ getTasksByDueDate conn (unpack date)
+      json tasks
 
     post "/tasks" $ do
       task <- jsonData
